@@ -41,21 +41,19 @@ jobs:
         shell: bash
 
       # Step 5: Archive Executable for macOS/Linux or Prepare ZIP for Windows
-      - name: Archive or Zip Executable
-        run: |
-          if [ "${{ matrix.os }}" != "windows-latest" ]; then
-            cd dist && tar -czf OKX-scraper-${{ matrix.os }}.tar.gz OKX-scraper-${{ matrix.os }}
-          else
-            Compress-Archive -Path dist\OKX-scraper-${{ matrix.os }}.exe -DestinationPath dist\OKX-scraper-${{ matrix.os }}.zip
-          fi
-        shell: bash
+      - name: Archive Executable for macOS/Linux
         if: runner.os != 'Windows'
-
-      - name: Archive or Zip Executable (Windows)
         run: |
-          Compress-Archive -Path dist\OKX-scraper-${{ matrix.os }}.exe -DestinationPath dist\OKX-scraper-${{ matrix.os }}.zip
-        shell: powershell
+          mkdir -p artifacts
+          cd dist && tar -czf ../artifacts/OKX-scraper-${{ matrix.os }}.tar.gz OKX-scraper-${{ matrix.os }}
+        shell: bash
+
+      - name: Archive Executable for Windows
         if: runner.os == 'Windows'
+        run: |
+          mkdir artifacts
+          Compress-Archive -Path dist\OKX-scraper-${{ matrix.os }}.exe -DestinationPath artifacts\OKX-scraper-${{ matrix.os }}.zip
+        shell: powershell
 
       # Step 6: Upload Artifact
       - name: Upload Artifact
@@ -63,4 +61,4 @@ jobs:
         with:
           name: OKX-scraper-${{ matrix.os }}
           path: |
-            dist/OKX-scraper-${{ matrix.os }}*
+            artifacts/OKX-scraper-${{ matrix.os }}.*
