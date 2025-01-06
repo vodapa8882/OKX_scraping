@@ -86,7 +86,7 @@ jobs:
 
 
   release:
-    needs: [build-windows, build-linux, build-macos]
+    needs: [build-windows, build-linux]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -105,12 +105,6 @@ jobs:
         with:
           name: linux_executable
           path: ./dist/linux
-
-      - name: Download macOS artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: macos_executable
-          path: ./dist/macos
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
