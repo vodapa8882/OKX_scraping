@@ -1,16 +1,13 @@
-name: Build and Upload OKX Scraper Executables
+name: Build and Release OKX Scraper Executables
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    tags:
+      - "v*"
 
 jobs:
   build:
-    name: Build OKX Scraper Executables
+    name: Build and Release Executables
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -20,7 +17,7 @@ jobs:
     steps:
       # Step 1: Check out the repository
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Step 2: Set up Python
       - name: Set up Python
@@ -55,10 +52,12 @@ jobs:
           Compress-Archive -Path dist\OKX-scraper-${{ matrix.os }}.exe -DestinationPath artifacts\OKX-scraper-${{ matrix.os }}.zip
         shell: powershell
 
-      # Step 6: Upload Artifact
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      # Step 6: Upload Artifacts to Release
+      - name: Release with Uploaded Artifacts
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: OKX-scraper-${{ matrix.os }}
-          path: |
+          files: |
             artifacts/OKX-scraper-${{ matrix.os }}.*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
