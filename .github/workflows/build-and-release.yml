@@ -43,7 +43,7 @@ jobs:
       - name: Set Executable Permissions (macOS/Linux)
         if: matrix.os != 'windows-latest'
         run: |
-          chmod +x dist/OKX-scraper-${{ matrix.os }}
+          chmod a+x dist/OKX-scraper-${{ matrix.os }}
 
       # Step 5: Upload Artifact
       - name: Upload Artifact
