@@ -40,14 +40,22 @@ jobs:
           pyinstaller --onefile --name OKX-scraper-${{ matrix.os }} main.py
         shell: bash
 
-      - name: Set Executable Permissions (macOS/Linux)
+      # Step 5: Archive for macOS and Linux
+      - name: Archive Executable (macOS/Linux)
         if: matrix.os != 'windows-latest'
         run: |
-          chmod a+x dist/OKX-scraper-${{ matrix.os }}
+          cd dist && tar -czf OKX-scraper-${{ matrix.os }}.tar.gz OKX-scraper-${{ matrix.os }}
 
-      # Step 5: Upload Artifact
+      # Step 6: Prepare Artifact Path
+      - name: Prepare Artifact Path
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            mv dist/OKX-scraper-${{ matrix.os }}.exe dist/OKX-scraper-${{ matrix.os }}.zip
+          fi
+
+      # Step 7: Upload Artifact
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OKX-scraper-${{ matrix.os }}
           path: |
