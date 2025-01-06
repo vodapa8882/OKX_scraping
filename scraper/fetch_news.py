@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import os
 import json
 import time
+from tqdm import tqdm
 from scraper.fetch_article_content import fetch_article_content
 
 def scrape_announcements(start_date, end_date, folder):
@@ -48,8 +49,9 @@ def scrape_announcements(start_date, end_date, folder):
         except Exception as e:
             print(f"Error parsing JSON data: {e}")
 
+        print(f"Processing page {page}")
         # process each announcement for output
-        for announcement in announcements:
+        for announcement in tqdm(announcements):
             # convert date to UTC
             cur_index = announcements.index(announcement)
             publish_time = publish_times[cur_index][1]
@@ -78,7 +80,7 @@ def scrape_announcements(start_date, end_date, folder):
                 next_page_url = pagination['href']
                 url = f"{base_url}{next_page_url}"
                 page += 1
-                time.sleep(1)
+                time.sleep(0.5)
             else:
                 has_more_pages = False
         else:
