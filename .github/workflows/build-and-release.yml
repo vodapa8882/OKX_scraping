@@ -37,8 +37,13 @@ jobs:
       # Step 4: Build Executable with Custom Name
       - name: Build with PyInstaller
         run: |
-          pyinstaller --onefile --name OKX-scraper-${{ matrix.os }} --manifest main.py
+          pyinstaller --onefile --name OKX-scraper-${{ matrix.os }} main.py
         shell: bash
+
+      - name: Set Executable Permissions (macOS/Linux)
+        if: matrix.os != 'windows-latest'
+        run: |
+          chmod +x dist/OKX-scraper-${{ matrix.os }}
 
       # Step 5: Upload Artifact
       - name: Upload Artifact
